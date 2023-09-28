@@ -1,6 +1,5 @@
 import LoadingButton from '@mui/lab/LoadingButton';
 import Box from '@mui/material/Box';
-// import IconButton from '@mui/material/IconButton';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import React, { useEffect, useState } from 'react';
@@ -10,7 +9,7 @@ import FetchProvider, { useFetchContext } from '../../context/Fetch';
 import { useErrorNotification } from '../../hooks/useErrorNotification';
 import i18n from '../../i18n';
 import Providers from '../../Providers';
-// import Description from '../Description';
+import Description from '../Description';
 import Loader from '../Loader';
 import { TextFieldStyles } from './styles';
 import { IProps } from './types';
@@ -105,7 +104,7 @@ const Settings: React.FC<IProps> = () => {
 				sx={{
 					gap: '8px',
 					alignItems: 'center',
-					width: '70%',
+					width: '80%',
 					fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
 				}}
 			>
@@ -192,7 +191,7 @@ const Settings: React.FC<IProps> = () => {
 					</LoadingButton>
 				</Box>
 			</Box>
-			{/* <Description /> */}
+			<Description />
 		</Box>
 	);
 };
