@@ -26,7 +26,7 @@ const Settings: React.FC<IProps> = () => {
 
 	useEffect(() => {
 		setLogin(cashierData?.cashier_login || '');
-		setLogin(cashierData?.cashier_password || '');
+		setPass(cashierData?.cashier_password || '');
 		setPin(cashierData?.cashier_pinecode || '');
 		setKey(cashierData?.license_key || '');
 	}, [cashierData]);
