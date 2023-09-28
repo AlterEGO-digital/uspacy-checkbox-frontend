@@ -1,4 +1,17 @@
 {
-  "title": "Configurações",
-  "save": "Salvar"
+  "secretKey": "Chave Secreta",
+  "regenerate": "Regenerar",
+  "replicate": "Copiar",
+  "copied": "Copiado",
+  "forApplicationSettings": "Dla ustawień aplikacji:",
+  "installPluginOnSite": "Zainstaluj moduł na swojej stronie Opencart.",
+  "instructionsForWordPress": "Instrukcje dotyczące instalacji i konfiguracji modułu Opencart są dostępne",
+  "here": "aqui",
+  "pluginSettingsSpecifySecretKey": "W ustawieniach wprowadź swój Klucz Sekretny (Secret Key), który znajdziesz na tym ekranie.",
+  "configureContactForm": "Em seguida, configure os formulários necessários em \"Contact Form 7\".",
+  "isThereNotEnoughFunctionalityForIntegration": "Se a funcionalidade estiver faltando para esta integração ou se for necessário outro aplicativo?",
+  "teamIsInTouch": "A equipe da AlterEGO está disponível",
+  "or": "ou",
+  "requestExecutionError": "Erro na execução da solicitação",
+  "downloadOpencartPlugin": "Baixe o módulo Opencart "
 }

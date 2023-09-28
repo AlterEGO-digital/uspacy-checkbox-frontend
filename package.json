@@ -6,13 +6,20 @@
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mui/material": "^5.13.0",
+    "@mui/lab": "^5.0.0-alpha.80",
+    "@mui/icons-material": "5.14.8",
+    "mdi-material-ui": "^7.1.0",
+    "localforage": "1.10.0",
+    "notistack": "^3.0.1",
+    "@reduxjs/toolkit": "1.8.1",
+    "react-redux": "7.2.8",
     "axios": "^1.4.0",
     "dotenv-webpack": "^8.0.1",
-    "i18next": "^23.4.6",
-    "i18next-resources-to-backend": "^1.1.4",
     "react": "18.2.0",
+    "react-i18next": "11.16.7",
     "react-dom": "18.2.0",
-    "react-i18next": "^13.2.2"
+    "i18next": "^23.4.6",
+    "i18next-resources-to-backend": "^1.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.21.8",

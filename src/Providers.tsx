@@ -1,15 +1,21 @@
-import React, { ReactNode } from 'react';
+import React, { createContext, useContext } from 'react';
 
-import LocalizationProvider from './context/Localization';
-import UserSettingsProvider from './context/UserSettings';
 import { IUserSettings } from './models/userSettings';
 
-const Providers: React.FC<{ children: ReactNode; userSettings?: IUserSettings }> = ({ children, userSettings }) => {
-	return (
-		<UserSettingsProvider userSettings={userSettings}>
-			<LocalizationProvider>{children}</LocalizationProvider>
-		</UserSettingsProvider>
-	);
+export interface IProps {
+	children?: React.ReactNode;
+	userSettings?: IUserSettings;
+}
+
+export interface IUserSettingsContext {
+	userSettings?: IUserSettings;
+}
+
+export const UserSettingsContext = createContext({});
+export const useUserSettingsContext = () => useContext<IUserSettingsContext>(UserSettingsContext);
+
+const Provider: React.FC<IProps> = ({ children, userSettings }) => {
+	return <UserSettingsContext.Provider value={{ userSettings }}>{children}</UserSettingsContext.Provider>;
 };
 
-export default Providers;
+export default Provider;

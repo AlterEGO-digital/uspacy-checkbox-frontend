@@ -1,0 +1,127 @@
+import React, { createContext, useContext, useEffect, useState } from 'react';
+
+import { DOMAIN } from '../../helpers';
+// import { getToken } from '../../helpers/db';
+import { useErrorNotification } from '../../hooks/useErrorNotification';
+
+interface IProps {
+	children: React.ReactNode;
+}
+
+interface ISaveSettingBody {
+	cashier_login?: string;
+	cashier_password?: string;
+	cashier_pinecode?: string;
+	license_key: string;
+}
+
+interface IFetchContext {
+	getCashierData(): void;
+	saveSettings(body: ISaveSettingBody): void;
+	logOut(): void;
+	cashierData: {
+		status: boolean;
+		message: string;
+		integration_status: boolean;
+		id: number;
+		cashier_login: string;
+		cashier_password: string;
+		cashier_pinecode: string;
+		license_key: string;
+	} | null;
+	loading: boolean;
+}
+
+export interface ISecretKey {
+	id: number;
+	status: boolean;
+	message: string;
+	key: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const Fetch: any = createContext({});
+export const useFetchContext = () => useContext<IFetchContext>(Fetch);
+
+const FetchProvider: React.FC<IProps> = ({ children }) => {
+	const [cashierData, setCashierData] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const CHECKBOX_API = `${DOMAIN}/checkbox/v1`;
+	const { errorNotification } = useErrorNotification();
+
+	const getCashierData = async () => {
+		setLoading(true);
+		try {
+			// const token = await getToken();
+			const token =
+				// eslint-disable-next-line max-len
+				'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3N0YWdlMy5zdGFnaW5nLnVzcGFjeS50ZWNoL2F1dGgvdjEvYXV0aC9yZWZyZXNoX3Rva2VuIiwiaWF0IjoxNjk1ODg4NjEwLCJleHAiOjE2OTU4OTc0MTgsIm5iZiI6MTY5NTg5MzgxOCwianRpIjoidVBQcTNlaDBQNkVMUk9YOSIsImlkIjoxLCJlbWFpbCI6Im1zQHVzcGFjeS5jb20iLCJzdWIiOiIxIiwiYXV0aFVzZXJJZCI6MywiZmlyc3ROYW1lIjoiTWF0dGhldyIsImxhc3ROYW1lIjoiRG9ub3ZhbiIsIndvcmtzcGFjZUlkIjoic3RhZ2UzIiwiZG9tYWluIjoic3RhZ2UzLnN0YWdpbmcudXNwYWN5LnRlY2giLCJyb2xlcyI6WyJPV05FUiIsIkVtcGxveWVlIiwiTWFuYWdlciBvZiB0aGUgc2FsZXMgZGVwYXJ0bWVudCJdLCJkZXBhcnRtZW50cyI6WzEsMV0sInBlcm1pc3Npb25zIjp7ImNyZWF0ZSI6WyJjcm0ubGVhZHMuY3JlYXRlLmFsbG93ZWQiLCJjcm0uY29udGFjdHMuY3JlYXRlLmFsbG93ZWQiLCJjcm0uY29tcGFuaWVzLmNyZWF0ZS5hbGxvd2VkIiwiY3JtLmRlYWxzLmNyZWF0ZS5hbGxvd2VkIiwiY3JtLmludm9pY2UuY3JlYXRlLmFsbG93ZWQiLCJjcm0ucHJvZHVjdC5jcmVhdGUuYWxsb3dlZCIsImNybS5hY3Rpdml0eS5jcmVhdGUuYWxsb3dlZCIsImhybS5oaXJpbmcuY3JlYXRlLmFsbG93ZWQiLCJocm0uY2FuZGlkYXRlLmNyZWF0ZS5hbGxvd2VkIiwiaHJtLmRlcGFydG1lbnQuY3JlYXRlLmFsbG93ZWQiLCJocm0uZW1wbG95ZWUuY3JlYXRlLmFsbG93ZWQiLCJ0YXNrcy50YXNrLmNyZWF0ZS5hbGxvd2VkIiwidGFza3MuYm9hcmQuY3JlYXRlLmFsbG93ZWQiLCJ0YXNrcy50ZW1wbGF0ZS5jcmVhdGUuYWxsb3dlZCJdLCJ2aWV3IjpbImNybS5sZWFkcy52aWV3LmFsbG93ZWQiLCJjcm0uY29udGFjdHMudmlldy5hbGxvd2VkIiwiY3JtLmNvbXBhbmllcy52aWV3LmFsbG93ZWQiLCJjcm0uZGVhbHMudmlldy5hbGxvd2VkIiwiY3JtLmludm9pY2Uudmlldy5hbGxvd2VkIiwiY3JtLnByb2R1Y3Qudmlldy5hbGxvd2VkIiwiY3JtLmFjdGl2aXR5LnZpZXcuYWxsb3dlZCIsImhybS5oaXJpbmcudmlldy5hbGxvd2VkIiwiaHJtLmNhbmRpZGF0ZS52aWV3LmFsbG93ZWQiLCJocm0uZGVwYXJ0bWVudC52aWV3LmFsbG93ZWQiLCJocm0uZW1wbG95ZWUudmlldy5hbGxvd2VkIiwidGFza3MudGFzay52aWV3LmFsbG93ZWQiLCJ0YXNrcy5ib2FyZC52aWV3LmFsbG93ZWQiLCJ0YXNrcy50ZW1wbGF0ZS52aWV3LmFsbG93ZWQiXSwiZWRpdCI6WyJjcm0ubGVhZHMuZWRpdC5hbGxvd2VkIiwiY3JtLmNvbnRhY3RzLmVkaXQuYWxsb3dlZCIsImNybS5jb21wYW5pZXMuZWRpdC5hbGxvd2VkIiwiY3JtLmRlYWxzLmVkaXQuYWxsb3dlZCIsImNybS5pbnZvaWNlLmVkaXQuYWxsb3dlZCIsImNybS5wcm9kdWN0LmVkaXQuYWxsb3dlZCIsImNybS5hY3Rpdml0eS5lZGl0LmFsbG93ZWQiLCJocm0uaGlyaW5nLmVkaXQuYWxsb3dlZCIsImhybS5jYW5kaWRhdGUuZWRpdC5hbGxvd2VkIiwiaHJtLmRlcGFydG1lbnQuZWRpdC5hbGxvd2VkIiwiaHJtLmVtcGxveWVlLmVkaXQuYWxsb3dlZCIsInRhc2tzLnRhc2suZWRpdC5hbGxvd2VkIiwidGFza3MuYm9hcmQuZWRpdC5hbGxvd2VkIiwidGFza3MudGVtcGxhdGUuZWRpdC5hbGxvd2VkIiwibmV3c19mZWVkLm5ld3MuZWRpdC5hbGxvd2VkIl0sImRlbGV0ZSI6WyJjcm0ubGVhZHMuZGVsZXRlLmFsbG93ZWQiLCJjcm0uY29udGFjdHMuZGVsZXRlLmFsbG93ZWQiLCJjcm0uY29tcGFuaWVzLmRlbGV0ZS5hbGxvd2VkIiwiY3JtLmRlYWxzLmRlbGV0ZS5hbGxvd2VkIiwiY3JtLmludm9pY2UuZGVsZXRlLmFsbG93ZWQiLCJjcm0ucHJvZHVjdC5kZWxldGUuYWxsb3dlZCIsImNybS5hY3Rpdml0eS5kZWxldGUuYWxsb3dlZCIsImhybS5oaXJpbmcuZGVsZXRlLmFsbG93ZWQiLCJocm0uY2FuZGlkYXRlLmRlbGV0ZS5hbGxvd2VkIiwiaHJtLmRlcGFydG1lbnQuZGVsZXRlLmFsbG93ZWQiLCJocm0uZW1wbG95ZWUuZGVsZXRlLmFsbG93ZWQiLCJ0YXNrcy50YXNrLmRlbGV0ZS5hbGxvd2VkIiwidGFza3MuYm9hcmQuZGVsZXRlLmFsbG93ZWQiLCJ0YXNrcy50ZW1wbGF0ZS5kZWxldGUuYWxsb3dlZCIsIm5ld3NfZmVlZC5uZXdzLmRlbGV0ZS5hbGxvd2VkIl19LCJ0YXJpZmZJZCI6M30.n9WFOEfq32PpDXVqcuNlczPfuS1NMaygTyjaC6cPFAs';
+			const res = await fetch(`${CHECKBOX_API}/cashiers/get`, {
+				headers: { Accept: 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+			});
+			const data: ISecretKey = await res.json();
+			setCashierData(data || null);
+		} catch (e) {
+			errorNotification();
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const logOut = async () => {
+		setLoading(true);
+		try {
+			// const token = await getToken();
+			const token =
+				// eslint-disable-next-line max-len
+				'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3N0YWdlMy5zdGFnaW5nLnVzcGFjeS50ZWNoL2F1dGgvdjEvYXV0aC9yZWZyZXNoX3Rva2VuIiwiaWF0IjoxNjk1ODg4NjEwLCJleHAiOjE2OTU4OTc0MTgsIm5iZiI6MTY5NTg5MzgxOCwianRpIjoidVBQcTNlaDBQNkVMUk9YOSIsImlkIjoxLCJlbWFpbCI6Im1zQHVzcGFjeS5jb20iLCJzdWIiOiIxIiwiYXV0aFVzZXJJZCI6MywiZmlyc3ROYW1lIjoiTWF0dGhldyIsImxhc3ROYW1lIjoiRG9ub3ZhbiIsIndvcmtzcGFjZUlkIjoic3RhZ2UzIiwiZG9tYWluIjoic3RhZ2UzLnN0YWdpbmcudXNwYWN5LnRlY2giLCJyb2xlcyI6WyJPV05FUiIsIkVtcGxveWVlIiwiTWFuYWdlciBvZiB0aGUgc2FsZXMgZGVwYXJ0bWVudCJdLCJkZXBhcnRtZW50cyI6WzEsMV0sInBlcm1pc3Npb25zIjp7ImNyZWF0ZSI6WyJjcm0ubGVhZHMuY3JlYXRlLmFsbG93ZWQiLCJjcm0uY29udGFjdHMuY3JlYXRlLmFsbG93ZWQiLCJjcm0uY29tcGFuaWVzLmNyZWF0ZS5hbGxvd2VkIiwiY3JtLmRlYWxzLmNyZWF0ZS5hbGxvd2VkIiwiY3JtLmludm9pY2UuY3JlYXRlLmFsbG93ZWQiLCJjcm0ucHJvZHVjdC5jcmVhdGUuYWxsb3dlZCIsImNybS5hY3Rpdml0eS5jcmVhdGUuYWxsb3dlZCIsImhybS5oaXJpbmcuY3JlYXRlLmFsbG93ZWQiLCJocm0uY2FuZGlkYXRlLmNyZWF0ZS5hbGxvd2VkIiwiaHJtLmRlcGFydG1lbnQuY3JlYXRlLmFsbG93ZWQiLCJocm0uZW1wbG95ZWUuY3JlYXRlLmFsbG93ZWQiLCJ0YXNrcy50YXNrLmNyZWF0ZS5hbGxvd2VkIiwidGFza3MuYm9hcmQuY3JlYXRlLmFsbG93ZWQiLCJ0YXNrcy50ZW1wbGF0ZS5jcmVhdGUuYWxsb3dlZCJdLCJ2aWV3IjpbImNybS5sZWFkcy52aWV3LmFsbG93ZWQiLCJjcm0uY29udGFjdHMudmlldy5hbGxvd2VkIiwiY3JtLmNvbXBhbmllcy52aWV3LmFsbG93ZWQiLCJjcm0uZGVhbHMudmlldy5hbGxvd2VkIiwiY3JtLmludm9pY2Uudmlldy5hbGxvd2VkIiwiY3JtLnByb2R1Y3Qudmlldy5hbGxvd2VkIiwiY3JtLmFjdGl2aXR5LnZpZXcuYWxsb3dlZCIsImhybS5oaXJpbmcudmlldy5hbGxvd2VkIiwiaHJtLmNhbmRpZGF0ZS52aWV3LmFsbG93ZWQiLCJocm0uZGVwYXJ0bWVudC52aWV3LmFsbG93ZWQiLCJocm0uZW1wbG95ZWUudmlldy5hbGxvd2VkIiwidGFza3MudGFzay52aWV3LmFsbG93ZWQiLCJ0YXNrcy5ib2FyZC52aWV3LmFsbG93ZWQiLCJ0YXNrcy50ZW1wbGF0ZS52aWV3LmFsbG93ZWQiXSwiZWRpdCI6WyJjcm0ubGVhZHMuZWRpdC5hbGxvd2VkIiwiY3JtLmNvbnRhY3RzLmVkaXQuYWxsb3dlZCIsImNybS5jb21wYW5pZXMuZWRpdC5hbGxvd2VkIiwiY3JtLmRlYWxzLmVkaXQuYWxsb3dlZCIsImNybS5pbnZvaWNlLmVkaXQuYWxsb3dlZCIsImNybS5wcm9kdWN0LmVkaXQuYWxsb3dlZCIsImNybS5hY3Rpdml0eS5lZGl0LmFsbG93ZWQiLCJocm0uaGlyaW5nLmVkaXQuYWxsb3dlZCIsImhybS5jYW5kaWRhdGUuZWRpdC5hbGxvd2VkIiwiaHJtLmRlcGFydG1lbnQuZWRpdC5hbGxvd2VkIiwiaHJtLmVtcGxveWVlLmVkaXQuYWxsb3dlZCIsInRhc2tzLnRhc2suZWRpdC5hbGxvd2VkIiwidGFza3MuYm9hcmQuZWRpdC5hbGxvd2VkIiwidGFza3MudGVtcGxhdGUuZWRpdC5hbGxvd2VkIiwibmV3c19mZWVkLm5ld3MuZWRpdC5hbGxvd2VkIl0sImRlbGV0ZSI6WyJjcm0ubGVhZHMuZGVsZXRlLmFsbG93ZWQiLCJjcm0uY29udGFjdHMuZGVsZXRlLmFsbG93ZWQiLCJjcm0uY29tcGFuaWVzLmRlbGV0ZS5hbGxvd2VkIiwiY3JtLmRlYWxzLmRlbGV0ZS5hbGxvd2VkIiwiY3JtLmludm9pY2UuZGVsZXRlLmFsbG93ZWQiLCJjcm0ucHJvZHVjdC5kZWxldGUuYWxsb3dlZCIsImNybS5hY3Rpdml0eS5kZWxldGUuYWxsb3dlZCIsImhybS5oaXJpbmcuZGVsZXRlLmFsbG93ZWQiLCJocm0uY2FuZGlkYXRlLmRlbGV0ZS5hbGxvd2VkIiwiaHJtLmRlcGFydG1lbnQuZGVsZXRlLmFsbG93ZWQiLCJocm0uZW1wbG95ZWUuZGVsZXRlLmFsbG93ZWQiLCJ0YXNrcy50YXNrLmRlbGV0ZS5hbGxvd2VkIiwidGFza3MuYm9hcmQuZGVsZXRlLmFsbG93ZWQiLCJ0YXNrcy50ZW1wbGF0ZS5kZWxldGUuYWxsb3dlZCIsIm5ld3NfZmVlZC5uZXdzLmRlbGV0ZS5hbGxvd2VkIl19LCJ0YXJpZmZJZCI6M30.n9WFOEfq32PpDXVqcuNlczPfuS1NMaygTyjaC6cPFAs';
+			fetch(`${CHECKBOX_API}/cashiers/delete`, {
+				method: 'DELETE',
+				headers: { Accept: 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+			}).then(() => getCashierData());
+		} catch (e) {
+			errorNotification();
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const saveSettings = async (body: ISaveSettingBody) => {
+		setLoading(true);
+		try {
+			// const token = await getToken();
+			const token =
+				// eslint-disable-next-line max-len
+				'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL3N0YWdlMy5zdGFnaW5nLnVzcGFjeS50ZWNoL2F1dGgvdjEvYXV0aC9yZWZyZXNoX3Rva2VuIiwiaWF0IjoxNjk1ODg4NjEwLCJleHAiOjE2OTU4OTc0MTgsIm5iZiI6MTY5NTg5MzgxOCwianRpIjoidVBQcTNlaDBQNkVMUk9YOSIsImlkIjoxLCJlbWFpbCI6Im1zQHVzcGFjeS5jb20iLCJzdWIiOiIxIiwiYXV0aFVzZXJJZCI6MywiZmlyc3ROYW1lIjoiTWF0dGhldyIsImxhc3ROYW1lIjoiRG9ub3ZhbiIsIndvcmtzcGFjZUlkIjoic3RhZ2UzIiwiZG9tYWluIjoic3RhZ2UzLnN0YWdpbmcudXNwYWN5LnRlY2giLCJyb2xlcyI6WyJPV05FUiIsIkVtcGxveWVlIiwiTWFuYWdlciBvZiB0aGUgc2FsZXMgZGVwYXJ0bWVudCJdLCJkZXBhcnRtZW50cyI6WzEsMV0sInBlcm1pc3Npb25zIjp7ImNyZWF0ZSI6WyJjcm0ubGVhZHMuY3JlYXRlLmFsbG93ZWQiLCJjcm0uY29udGFjdHMuY3JlYXRlLmFsbG93ZWQiLCJjcm0uY29tcGFuaWVzLmNyZWF0ZS5hbGxvd2VkIiwiY3JtLmRlYWxzLmNyZWF0ZS5hbGxvd2VkIiwiY3JtLmludm9pY2UuY3JlYXRlLmFsbG93ZWQiLCJjcm0ucHJvZHVjdC5jcmVhdGUuYWxsb3dlZCIsImNybS5hY3Rpdml0eS5jcmVhdGUuYWxsb3dlZCIsImhybS5oaXJpbmcuY3JlYXRlLmFsbG93ZWQiLCJocm0uY2FuZGlkYXRlLmNyZWF0ZS5hbGxvd2VkIiwiaHJtLmRlcGFydG1lbnQuY3JlYXRlLmFsbG93ZWQiLCJocm0uZW1wbG95ZWUuY3JlYXRlLmFsbG93ZWQiLCJ0YXNrcy50YXNrLmNyZWF0ZS5hbGxvd2VkIiwidGFza3MuYm9hcmQuY3JlYXRlLmFsbG93ZWQiLCJ0YXNrcy50ZW1wbGF0ZS5jcmVhdGUuYWxsb3dlZCJdLCJ2aWV3IjpbImNybS5sZWFkcy52aWV3LmFsbG93ZWQiLCJjcm0uY29udGFjdHMudmlldy5hbGxvd2VkIiwiY3JtLmNvbXBhbmllcy52aWV3LmFsbG93ZWQiLCJjcm0uZGVhbHMudmlldy5hbGxvd2VkIiwiY3JtLmludm9pY2Uudmlldy5hbGxvd2VkIiwiY3JtLnByb2R1Y3Qudmlldy5hbGxvd2VkIiwiY3JtLmFjdGl2aXR5LnZpZXcuYWxsb3dlZCIsImhybS5oaXJpbmcudmlldy5hbGxvd2VkIiwiaHJtLmNhbmRpZGF0ZS52aWV3LmFsbG93ZWQiLCJocm0uZGVwYXJ0bWVudC52aWV3LmFsbG93ZWQiLCJocm0uZW1wbG95ZWUudmlldy5hbGxvd2VkIiwidGFza3MudGFzay52aWV3LmFsbG93ZWQiLCJ0YXNrcy5ib2FyZC52aWV3LmFsbG93ZWQiLCJ0YXNrcy50ZW1wbGF0ZS52aWV3LmFsbG93ZWQiXSwiZWRpdCI6WyJjcm0ubGVhZHMuZWRpdC5hbGxvd2VkIiwiY3JtLmNvbnRhY3RzLmVkaXQuYWxsb3dlZCIsImNybS5jb21wYW5pZXMuZWRpdC5hbGxvd2VkIiwiY3JtLmRlYWxzLmVkaXQuYWxsb3dlZCIsImNybS5pbnZvaWNlLmVkaXQuYWxsb3dlZCIsImNybS5wcm9kdWN0LmVkaXQuYWxsb3dlZCIsImNybS5hY3Rpdml0eS5lZGl0LmFsbG93ZWQiLCJocm0uaGlyaW5nLmVkaXQuYWxsb3dlZCIsImhybS5jYW5kaWRhdGUuZWRpdC5hbGxvd2VkIiwiaHJtLmRlcGFydG1lbnQuZWRpdC5hbGxvd2VkIiwiaHJtLmVtcGxveWVlLmVkaXQuYWxsb3dlZCIsInRhc2tzLnRhc2suZWRpdC5hbGxvd2VkIiwidGFza3MuYm9hcmQuZWRpdC5hbGxvd2VkIiwidGFza3MudGVtcGxhdGUuZWRpdC5hbGxvd2VkIiwibmV3c19mZWVkLm5ld3MuZWRpdC5hbGxvd2VkIl0sImRlbGV0ZSI6WyJjcm0ubGVhZHMuZGVsZXRlLmFsbG93ZWQiLCJjcm0uY29udGFjdHMuZGVsZXRlLmFsbG93ZWQiLCJjcm0uY29tcGFuaWVzLmRlbGV0ZS5hbGxvd2VkIiwiY3JtLmRlYWxzLmRlbGV0ZS5hbGxvd2VkIiwiY3JtLmludm9pY2UuZGVsZXRlLmFsbG93ZWQiLCJjcm0ucHJvZHVjdC5kZWxldGUuYWxsb3dlZCIsImNybS5hY3Rpdml0eS5kZWxldGUuYWxsb3dlZCIsImhybS5oaXJpbmcuZGVsZXRlLmFsbG93ZWQiLCJocm0uY2FuZGlkYXRlLmRlbGV0ZS5hbGxvd2VkIiwiaHJtLmRlcGFydG1lbnQuZGVsZXRlLmFsbG93ZWQiLCJocm0uZW1wbG95ZWUuZGVsZXRlLmFsbG93ZWQiLCJ0YXNrcy50YXNrLmRlbGV0ZS5hbGxvd2VkIiwidGFza3MuYm9hcmQuZGVsZXRlLmFsbG93ZWQiLCJ0YXNrcy50ZW1wbGF0ZS5kZWxldGUuYWxsb3dlZCIsIm5ld3NfZmVlZC5uZXdzLmRlbGV0ZS5hbGxvd2VkIl19LCJ0YXJpZmZJZCI6M30.n9WFOEfq32PpDXVqcuNlczPfuS1NMaygTyjaC6cPFAs';
+			fetch(`${CHECKBOX_API}/cashiers/createOrUpdate`, {
+				method: 'POST',
+				headers: { Accept: 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+				body: JSON.stringify(body),
+			}).then(() => getCashierData());
+		} catch (e) {
+			errorNotification();
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	useEffect(() => {
+		getCashierData();
+	}, []);
+
+	return (
+		<Fetch.Provider
+			value={{
+				getCashierData,
+				saveSettings,
+				logOut,
+				cashierData,
+				loading,
+			}}
+		>
+			{children}
+		</Fetch.Provider>
+	);
+};
+
+export default FetchProvider;

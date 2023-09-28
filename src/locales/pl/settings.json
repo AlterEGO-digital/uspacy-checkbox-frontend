@@ -1,4 +1,17 @@
 {
-  "title": "Ustawienia",
-  "save": "Zapisz"
+  "secretKey": "Klucz tajny",
+  "regenerate": "Przegenerować",
+  "replicate": "Kopiuj",
+  "copied": "Skopiowane",
+  "forApplicationSettings": "Dla ustawień aplikacji",
+  "installPluginOnSite": "Zainstaluj moduł na swojej stronie Opencart.",
+  "instructionsForWordPress": "Instrukcje dotyczące instalacji i konfiguracji modułu Opencart są dostępne",
+  "here": "tutaj",
+  "pluginSettingsSpecifySecretKey": "W ustawieniach wprowadź swój Klucz Sekretny (Secret Key), który znajdziesz na tym ekranie.",
+  "configureContactForm": "Następnie skonfiguruj wymagane formularze w \"Contact Form 7\".",
+  "isThereNotEnoughFunctionalityForIntegration": "Jeśli brakuje funkcji w tej integracji lub potrzebny jest inny program?",
+  "teamIsInTouch": "КZespół AlterEGO jest dostępny",
+  "or": "lub",
+  "requestExecutionError": "Błąd wykonania żądania",
+  "downloadOpencartPlugin": "Pobierz moduł Opencart "
 }
