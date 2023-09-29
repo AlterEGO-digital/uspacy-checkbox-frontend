@@ -126,6 +126,7 @@ const Settings: React.FC<IProps> = () => {
 						<Box sx={{ mt: 1 }}>{t('password')}</Box>
 						<TextFieldStyles
 							fullWidth
+							type="password"
 							sx={{
 								color: theme.palette.text.disabled,
 								background: 'none',
