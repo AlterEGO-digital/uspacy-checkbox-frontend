@@ -1,5 +1,9 @@
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import OutlinedInput from '@mui/material/OutlinedInput';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import React, { useEffect, useState } from 'react';
@@ -23,6 +27,7 @@ const Settings: React.FC<IProps> = () => {
 	const [pass, setPass] = useState('');
 	const [pin, setPin] = useState('');
 	const [key, setKey] = useState('');
+	const [showPassword, setShowPassword] = useState(false);
 
 	useEffect(() => {
 		setLogin(cashierData?.cashier_login || '');
@@ -35,6 +40,12 @@ const Settings: React.FC<IProps> = () => {
 	const handleChangePass = (e) => setPass(e.target.value);
 	const handleChangePin = (e) => setPin(e.target.value);
 	const handleChangeKey = (e) => setKey(e.target.value);
+
+	const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+	const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+		event.preventDefault();
+	};
 
 	const handleSaveSettings = () => {
 		if (!key.length || !((login.length && pass.length) || pin.length)) {
@@ -124,15 +135,31 @@ const Settings: React.FC<IProps> = () => {
 							value={login}
 						/>
 						<Box sx={{ mt: 1 }}>{t('password')}</Box>
-						<TextFieldStyles
+						<OutlinedInput
 							fullWidth
-							type="password"
+							type={showPassword ? 'text' : 'password'}
 							sx={{
 								color: theme.palette.text.disabled,
 								background: 'none',
 								outline: 'none',
 								mt: 1,
+
+								'& input': {
+									padding: '9px 12px 9px 17px',
+								},
 							}}
+							endAdornment={
+								<InputAdornment position="end">
+									<IconButton
+										aria-label="toggle password visibility"
+										onClick={handleClickShowPassword}
+										onMouseDown={handleMouseDownPassword}
+										edge="end"
+									>
+										{showPassword ? <VisibilityOff /> : <Visibility />}
+									</IconButton>
+								</InputAdornment>
+							}
 							onChange={handleChangePass}
 							value={pass}
 						/>
