@@ -28,6 +28,7 @@ const Settings: React.FC<IProps> = () => {
 	const [pin, setPin] = useState('');
 	const [key, setKey] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
+	const [showPin, setShowPin] = useState(false);
 
 	useEffect(() => {
 		setLogin(cashierData?.cashier_login || '');
@@ -42,6 +43,7 @@ const Settings: React.FC<IProps> = () => {
 	const handleChangeKey = (e) => setKey(e.target.value);
 
 	const handleClickShowPassword = () => setShowPassword((show) => !show);
+	const handleClickShowPin = () => setShowPin((show) => !show);
 
 	const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
 		event.preventDefault();
@@ -126,7 +128,6 @@ const Settings: React.FC<IProps> = () => {
 						<TextFieldStyles
 							fullWidth
 							sx={{
-								color: theme.palette.text.disabled,
 								background: 'none',
 								outline: 'none',
 								mt: 1,
@@ -139,7 +140,6 @@ const Settings: React.FC<IProps> = () => {
 							fullWidth
 							type={showPassword ? 'text' : 'password'}
 							sx={{
-								color: theme.palette.text.disabled,
 								background: 'none',
 								outline: 'none',
 								mt: 1,
@@ -165,16 +165,31 @@ const Settings: React.FC<IProps> = () => {
 						/>
 						<Box sx={{ mt: 2 }}>{t('or')}</Box>
 						<Box sx={{ mt: 2 }}>{t('pin')}</Box>
-						<TextFieldStyles
+						<OutlinedInput
 							fullWidth
+							type={showPin ? 'text' : 'password'}
 							sx={{
-								color: theme.palette.text.disabled,
 								background: 'none',
 								outline: 'none',
 								mt: 1,
+								'& input': {
+									padding: '9px 12px 9px 17px',
+								},
 							}}
 							onChange={handleChangePin}
 							value={pin}
+							endAdornment={
+								<InputAdornment position="end">
+									<IconButton
+										aria-label="toggle password visibility"
+										onClick={handleClickShowPin}
+										onMouseDown={handleMouseDownPassword}
+										edge="end"
+									>
+										{showPin ? <VisibilityOff /> : <Visibility />}
+									</IconButton>
+								</InputAdornment>
+							}
 						/>
 					</Box>
 				</Box>
@@ -185,7 +200,6 @@ const Settings: React.FC<IProps> = () => {
 						<TextFieldStyles
 							fullWidth
 							sx={{
-								color: theme.palette.text.disabled,
 								background: 'none',
 								outline: 'none',
 								mt: 1,
